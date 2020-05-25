@@ -8,7 +8,7 @@ const passport = require('passport');
 
 const User = require('../Schemas/User');
 
-
+var cookieParser = require('cookie-parser')
 
 
 
@@ -76,12 +76,65 @@ router.post('/login', (req,res)=>{
                     keys.secretOrKey,
                     {expiresIn: 3600},
                     (err, token)=>{
-                        res.json({
+                        res
+                        .cookie(
+                            'login-token','Bearer '+ token, {maxAge:3600000}
+                        )
+                        .json({
                             success: true, 
                             token : 'Bearer '+ token
                         })
+                        
                     }
                 )
+
+
+                // res.cookie('login-token', JSON.stringify(signedToken).toString()).send(JSON.stringify(signedToken).toString())
+              
+                
+            }else{
+                res.status(404).json('Incorrect password')
+            }
+        })
+    })
+})
+
+
+router.get('/login-test', (req,res)=>{
+    const email = "banana@gmail.com"
+    const password = "supersecretpassword"
+    User
+    .findOne({email})
+    .then(user =>{
+        if (!user) {
+            return res.status(404).json('User Not Found!');            
+        }
+
+        bcrypt.compare(password, user.password).then(isMatch =>{
+            if (isMatch) {
+                const payload ={id : user.id, name : user.name};
+
+                //signature in seconds
+                jwt.sign(
+                    payload,
+                    keys.secretOrKey,
+                    {expiresIn: 3600},
+                    (err, token)=>{
+                        res
+                        .cookie(
+                            'login-token','Bearer '+ token, {maxAge:3600} //in ms
+                        )
+                        .json({
+                            success: true, 
+                            token : 'Bearer '+ token
+                        })
+                        
+                    }
+                )
+
+
+                // res.cookie('login-token', JSON.stringify(signedToken).toString()).send(JSON.stringify(signedToken).toString())
+              
                 
             }else{
                 res.status(404).json('Incorrect password')

@@ -2,12 +2,13 @@
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const mongoose =require('mongoose');
+var cookieParser = require('cookie-parser')
 
 const bodyParser = require('body-parser');
 
 const passport = require('passport');
 
-const keys = require('../configs/mongo-db');
+const keys = require('./configs/mongo-db');
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -42,10 +43,11 @@ app.use('/api/users', users);
 
 app.get('/cookies', (req,res)=>{
     res.cookie('my-secret-cookie',uuidv4() )
+    res.send('your cookies was set')
 });
 
 app.get('/read-cookies', (req, res)=>{
-    res.send('cookies : '+req.cookie('my-secret-cookie'))
+    res.send('cookies : '+req.cookies['login-token'])
 })
 
 
