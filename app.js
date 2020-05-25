@@ -2,7 +2,9 @@
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const mongoose =require('mongoose');
+const Handlebars = require("handlebars");
 var cookieParser = require('cookie-parser')
+let path = require('path')
 
 const bodyParser = require('body-parser');
 
@@ -16,6 +18,7 @@ const port = process.env.PORT || 3000
 
 
 //set view engine
+app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
 
 const users = require ('./routes/users');
@@ -29,7 +32,7 @@ app.use(cookieParser(keys.secretOrKey))
 
 
 mongoose.connect(db, { useFindAndModify: false, useNewUrlParser:true })
-    .then(()=>console.log('Monggo db connected'))
+    .then(()=>console.log('Mongodb connected'))
     .catch(err=>console.log(err));
 
 
@@ -38,7 +41,7 @@ require('./configs/passport')(passport);
 app.use(passport.initialize());
 
 
-app.get('/', (req, res) => res.send('Hello World!'));
+app.get('/', (req, res) => res.render('index'));
 app.use('/api/users', users);
 
 app.get('/cookies', (req,res)=>{
