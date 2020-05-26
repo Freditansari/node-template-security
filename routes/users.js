@@ -78,7 +78,7 @@ router.post('/login', (req,res)=>{
                     (err, token)=>{
                         res
                         .cookie(
-                            'login-token','Bearer '+ token, {maxAge:3600000}
+                            'login-token', token, {maxAge:3600000}
                         )
                         .json({
                             success: true, 
@@ -122,7 +122,7 @@ router.get('/login-test', (req,res)=>{
                     (err, token)=>{
                         res
                         .cookie(
-                            'login-token','Bearer '+ token, {maxAge:3600} //in ms
+                            'login-token', token, {maxAge:3600000} //in ms
                         )
                         .json({
                             success: true, 

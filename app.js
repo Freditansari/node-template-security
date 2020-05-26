@@ -12,6 +12,8 @@ const passport = require('passport');
 
 const keys = require('./configs/mongo-db');
 
+const jwt = require('jsonwebtoken');
+
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -40,18 +42,17 @@ require('./configs/passport')(passport);
 
 app.use(passport.initialize());
 
+app.get('/verify-test', (req, res)=>{
+    let decoded =jwt.verify(req.cookies['login-token'], keys.secretOrKey);
+    res.send(decoded);
+})
+
+app.get('/check-cookie', (req,res)=>{
+    res.send(req.cookies['login-token'])
+})
 
 app.get('/', (req, res) => res.render('index'));
 app.use('/api/users', users);
-
-app.get('/cookies', (req,res)=>{
-    res.cookie('my-secret-cookie',uuidv4() )
-    res.send('your cookies was set')
-});
-
-app.get('/read-cookies', (req, res)=>{
-    res.send('cookies : '+req.cookies['login-token'])
-})
 
 
 
